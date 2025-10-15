@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoldSelect Admin - Folder & Image Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔧 FoldSelect Admin</h1>
+            <p>Manage folders, upload images, and control what users can see</p>
+        </header>
+
+        <main>
+            <!-- Folder Creation Section -->
+            <section class="create-folder-section">
+                <h2>Create New Folder</h2>
+                <div class="folder-form">
+                    <input type="text" id="folderNameInput" placeholder="Enter folder name..." maxlength="50">
+                    <button id="createFolderBtn">Create Folder</button>
+                </div>
+            </section>
+
+            <!-- Image Upload Section -->
+            <section class="upload-section">
+                <h2>Upload Images</h2>
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="folderSelect">Select Folder:</label>
+                        <select id="folderSelect" required>
+                            <option value="">Choose a folder...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="imageInput">Choose Images:</label>
+                        <input type="file" id="imageInput" multiple accept="image/*" required>
+                        <div class="file-info">
+                            <small>Supported formats: JPG, PNG, GIF, WebP, SVG (Max 10MB per file, up to 10 files)</small>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="uploadBtn">Upload Images</button>
+                </form>
+            </section>
+
+            <!-- Progress Section -->
+            <section class="progress-section" id="progressSection" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Uploading...</div>
+            </section>
+
+            <!-- Folders Display Section -->
+            <section class="folders-section">
+                <h2>Your Folders</h2>
+                <div class="selection-info">
+                    <p><strong>Note:</strong> Only one folder can be active at a time. Activating a folder will automatically deactivate others.</p>
+                </div>
+                <div class="folders-grid" id="foldersGrid">
+                    <!-- Folders will be dynamically loaded here -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Toast Notifications -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <img id="modalImage" src="" alt="">
+            <div class="modal-caption" id="modalCaption"></div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoldSelect - Image Gallery</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖼️ FoldSelect Gallery</h1>
+            <p>Browse and view images from available folders</p>
+        </header>
+
+        <main>
+            <!-- Images Gallery Section -->
+            <section class="folders-section">
+                <div class="section-header">
+                    <h2>Image Gallery</h2>
+                    <div class="live-indicator" id="liveIndicator">
+                        <span class="live-dot"></span>
+                        <span class="live-text">Live Updates</span>
+                    </div>
+                </div>
+                
+                <!-- Folder Filter -->
+                <div class="filter-section" id="filterSection" style="display: none;">
+                    <label for="folderFilter">Filter by folder:</label>
+                    <select id="folderFilter">
+                        <option value="all">All Folders</option>
+                    </select>
+                </div>
+                
+                <!-- Images Grid -->
+                <div class="images-gallery" id="imagesGrid">
+                    <!-- Images will be dynamically loaded here -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Toast Notifications -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <img id="modalImage" src="" alt="">
+            <div class="modal-caption" id="modalCaption"></div>
+        </div>
+    </div>
+
+    <script src="user.js"></script>
+</body>
+</html>
