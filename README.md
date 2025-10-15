@@ -33,7 +33,7 @@ A web application that allows users to create multiple folders and upload images
    npm install
    ```
 
-3. **Start the server:**
+3. **Start the server:***
    ```bash
    npm start
    ```
