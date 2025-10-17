@@ -5,7 +5,8 @@ const fs = require('fs-extra');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const uploadFolder = 'uploads';
+const uploadFolder = process.env.UPLOAD_FOLDER || 'uploads';
+const folderJson = process.env.FOLDER_JSON || 'folders.json';
 
 // Middleware
 app.use(express.json());
@@ -30,9 +31,8 @@ app.use((req, res, next) => {
 fs.ensureDirSync(uploadFolder);
 
 // Create folders.json file to store folder status if it doesn't exist
-const foldersConfigPath = './folders.json';
-if (!fs.existsSync(foldersConfigPath)) {
-  fs.writeJsonSync(foldersConfigPath, { folders: {} });
+if (!fs.existsSync(folderJson)) {
+  fs.writeJsonSync(folderJson, { folders: {} });
 }
 
 // Configure multer for file uploads
@@ -139,7 +139,7 @@ app.get('/api/debug/folders', (req, res) => {
 // Helper function to get folder config
 function getFoldersConfig() {
   try {
-    return fs.readJsonSync(foldersConfigPath);
+    return fs.readJsonSync(folderJson);
   } catch (error) {
     return { folders: {} };
   }
@@ -147,7 +147,7 @@ function getFoldersConfig() {
 
 // Helper function to save folder config
 function saveFoldersConfig(config) {
-  fs.writeJsonSync(foldersConfigPath, config);
+  fs.writeJsonSync(folderJson, config);
 }
 
 // Get list of existing folders (for admin)
