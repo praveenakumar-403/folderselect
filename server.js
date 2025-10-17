@@ -5,12 +5,13 @@ const fs = require('fs-extra');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const uploadFolder = 'uploads';
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(uploadFolder));
 
 // CORS middleware
 app.use((req, res, next) => {
@@ -26,7 +27,7 @@ app.use((req, res, next) => {
 });
 
 // Ensure uploads directory exists
-fs.ensureDirSync('./uploads');
+fs.ensureDirSync(uploadFolder);
 
 // Create folders.json file to store folder status if it doesn't exist
 const foldersConfigPath = './folders.json';
@@ -38,8 +39,8 @@ if (!fs.existsSync(foldersConfigPath)) {
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const folderName = req.body.folderName || 'default';
-    const folderPath = path.join('./uploads', folderName);
-    
+    const folderPath = path.join(uploadFolder, folderName);
+
     // Create folder if it doesn't exist
     fs.ensureDirSync(folderPath);
     cb(null, folderPath);
@@ -152,7 +153,7 @@ function saveFoldersConfig(config) {
 // Get list of existing folders (for admin)
 app.get('/api/folders', async (req, res) => {
   try {
-    const uploadsDir = './uploads';
+    const uploadsDir = uploadFolder;
     const foldersConfig = getFoldersConfig();
     const items = await fs.readdir(uploadsDir);
     const folders = [];
@@ -194,7 +195,7 @@ app.get('/api/folders', async (req, res) => {
 // Get list of active folders (for users)
 app.get('/api/folders/active', async (req, res) => {
   try {
-    const uploadsDir = './uploads';
+    const uploadsDir = uploadFolder;
     const foldersConfig = getFoldersConfig();
     const items = await fs.readdir(uploadsDir);
     const folders = [];
@@ -244,7 +245,7 @@ app.post('/api/folders', async (req, res) => {
       return res.status(400).json({ error: 'Invalid folder name' });
     }
     
-    const folderPath = path.join('./uploads', sanitizedName);
+    const folderPath = path.join(uploadFolder, sanitizedName);
     
     // Check if folder already exists
     if (await fs.pathExists(folderPath)) {
@@ -370,7 +371,7 @@ app.post('/api/upload', upload.array('images', 10), (req, res) => {
 app.delete('/api/folders/:folderName', async (req, res) => {
   try {
     const { folderName } = req.params;
-    const folderPath = path.join('./uploads', folderName);
+    const folderPath = path.join(uploadFolder, folderName);
     
     if (await fs.pathExists(folderPath)) {
       await fs.remove(folderPath);
