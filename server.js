@@ -158,10 +158,14 @@ app.get('/api/folders', async (req, res) => {
     const items = await fs.readdir(uploadsDir);
     const folders = [];
     
+    // Clean up config - remove entries for folders that don't exist physically
+    const existingFolderNames = [];
+    
     for (const item of items) {
       const itemPath = path.join(uploadsDir, item);
       const stat = await fs.stat(itemPath);
       if (stat.isDirectory()) {
+        existingFolderNames.push(item);
         const files = await fs.readdir(itemPath);
         const imageFiles = files.filter(file => {
           const ext = path.extname(file).toLowerCase();
@@ -171,7 +175,6 @@ app.get('/api/folders', async (req, res) => {
         // Ensure folder exists in config and get status
         if (!foldersConfig.folders[item]) {
           foldersConfig.folders[item] = { active: false, createdAt: new Date().toISOString() };
-          saveFoldersConfig(foldersConfig);
         }
         
         const isActive = foldersConfig.folders[item]?.active || false;
@@ -183,6 +186,19 @@ app.get('/api/folders', async (req, res) => {
           active: isActive
         });
       }
+    }
+    
+    // Remove deleted folders from config
+    let configChanged = false;
+    Object.keys(foldersConfig.folders).forEach(folderName => {
+      if (!existingFolderNames.includes(folderName)) {
+        delete foldersConfig.folders[folderName];
+        configChanged = true;
+      }
+    });
+    
+    if (configChanged) {
+      saveFoldersConfig(foldersConfig);
     }
     
     res.json(folders);
@@ -199,11 +215,13 @@ app.get('/api/folders/active', async (req, res) => {
     const foldersConfig = getFoldersConfig();
     const items = await fs.readdir(uploadsDir);
     const folders = [];
+    const existingFolderNames = [];
     
     for (const item of items) {
       const itemPath = path.join(uploadsDir, item);
       const stat = await fs.stat(itemPath);
       if (stat.isDirectory()) {
+        existingFolderNames.push(item);
         // Only include active folders
         const isActive = foldersConfig.folders[item]?.active || false;
         if (!isActive) continue;
@@ -221,6 +239,19 @@ app.get('/api/folders/active', async (req, res) => {
           active: true
         });
       }
+    }
+    
+    // Clean up config - remove entries for folders that don't exist physically
+    let configChanged = false;
+    Object.keys(foldersConfig.folders).forEach(folderName => {
+      if (!existingFolderNames.includes(folderName)) {
+        delete foldersConfig.folders[folderName];
+        configChanged = true;
+      }
+    });
+    
+    if (configChanged) {
+      saveFoldersConfig(foldersConfig);
     }
     
     res.json(folders);
